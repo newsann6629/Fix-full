@@ -209,19 +209,7 @@
 </template>
 
 <script setup>
-import { useService } from '../composables/services';
-import { ref } from 'vue';
 
-const { login } = useService()
-
-
-
-onMounted(() => {
-  
-})
-
-const Username = ref("")
-const Password = ref("")
 </script>
 
 <style lang="scss" scoped>
