@@ -14,6 +14,8 @@ export const useService = () =>{
         }
 
         try {
+            console.log("Username" , u)
+            console.log("Password", p)
             const res = await axios("api/auth/login",{
                 email: u,
                 password: p,
@@ -27,7 +29,7 @@ export const useService = () =>{
         
     }
 
-    const register = (u,p,) => {
+    const register = (u,p,czid,) => {
         
     }
 
