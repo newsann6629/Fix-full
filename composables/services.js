@@ -14,7 +14,7 @@ export const useService = () =>{
         }
 
         try {
-            const res = await axios("api/auth/login",{
+            const res = await axios.post("api/auth/login",{
                 email: u,
                 password: p,
             })
@@ -27,11 +27,29 @@ export const useService = () =>{
         
     }
 
-    const register = (u,p,czid,) => {
-        
+    const register = async(u,p,email,czid,bdate,phone,sal,po,level,dep) => {
+        try {
+            const res = await axios.post("api/auth/register",{
+                username: u,
+                email: email,
+                password: p,
+                czid: czid,
+                bdate: bdate,
+                phone: phone,
+                sal: sal,
+                po: po,
+                level: level,
+                dep: dep,
+            })
+            alert(res.data.data.message)
+        }
+        catch(err){
+            alert(err.response.data.message)
+        }
     }
 
     return {
+        register,
         login,
     }
 
