@@ -237,60 +237,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import axios from "axios";
-import { useService } from "../composables/services";
 
-const { register } = useService()
-
-const formref = ref(null);
-
-const Username = ref("");
-const Password = ref("");
-const Czid = ref("");
-const Bdate = ref("");
-const Sal = ref("");
-const Phone = ref("");
-const Email = ref("");
-const newlevel = ref("");
-const newdepartment = ref("");
-const newposition = ref("");
-
-const Level = ref("");
-const Department = ref("");
-const Position = ref("");
-
-const regis = async () => {
-  try {
-    const res = await axios.post("api/auth/register", {
-      username: Username.value,
-      password: Password.value,
-      czid: Czid.value,
-      bdate: Bdate.value,
-      salary: Sal.value,
-      phone: Phone.value,
-      email: Email.value,
-      level: newlevel.value,
-      department: newdepartment.value,
-      position: newposition.value,
-    });
-    alert("สำเร็จ");
-  } catch (err) {
-    alert("ไม่สำเร็จ");
-  }
-};
-
-const loadregis = async () => {
-  const res = await axios.get("api/auth/register");
-  console.log(res.data.data);
-  Level.value = res.data.data[0];
-  Department.value = res.data.data[2];
-  Position.value = res.data.data[1];
-};
-
-onMounted(() => {
-  loadregis();
-});
 </script>
 
 <style lang="scss" scoped></style>
