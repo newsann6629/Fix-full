@@ -13,19 +13,19 @@ export const useService = () =>{
             return
         }
 
-        try {
-            console.log("Username" , u)
-            console.log("Password", p)
-            const res = await axios("api/auth/login",{
-                email: u,
-                password: p,
-            })
-            UserStore.SetUser(res.data.data.token)
-            alert(res.data.data.message)
-        }
-        catch(err){
-            alert(err.response.data.message)
-        }
+        console.log("Username" , u)
+        console.log("Password", p)
+        // try {
+        //     const res = await axios("api/auth/login",{
+        //         email: u,
+        //         password: p,
+        //     })
+        //     UserStore.SetUser(res.data.data.token)
+        //     alert(res.data.data.message)
+        // }
+        // catch(err){
+        //     alert(err.response.data.message)
+        // }
         
     }
 
