@@ -1,7 +1,8 @@
 <template>
-    <div class="flex">
-        <div v-if="menuui" class="bg-gradient-to-r from-red-950 to-red-800 h-screen px-2.5 py-3">
-            <div>
+    <div class="relative">
+        <div class="flex">
+        <div class="bg-gradient-to-r from-red-950 to-red-800 h-screen px-2.5 py-3">
+            <div v-if="menuui" class="bg-gradient-to-r from-red-950 to-red-800 h-screen px-2.5 py-3">
                 <div class="mb-10">
                     <div class="flex gap-10">
                         <label for="" class="text-white text-3xl flex justify-start">ระบบประเมินบุคลากร</label>
@@ -23,39 +24,76 @@
                 <div class="flex justify-center">
                     <button type="submit" class="text-white border rounded-lg px-2.5 py-1.5"> <i class="mdi mdi-logout"></i> ออกจากระบบ</button>
                 </div>
-            </div>
-            <div class="mt-10">
-                <div class="flex justify-start">
-                    <i class="mdi mdi-account text-white"></i>
-                    <nuxt-link to="" class=" text-white px-3 w-full">แก้ไขโปรไฟล์ส่วนตัว</nuxt-link>
-                    <i class="mdi mdi-menu-right text-white w-full flex justify-end"></i>
+                <div class="mt-10">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-home text-white"></i>
+                        <nuxt-link to="/admin/Dashboard/" class=" text-white px-3 w-full">หน้าแรก</nuxt-link>
+                        <i class="mdi mdi-menu-right text-white w-full flex justify-end"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-account text-white"></i>
+                        <nuxt-link to="profile" class=" text-white px-3 w-full">แก้ไขโปรไฟล์ส่วนตัว</nuxt-link>
+                        <i class="mdi mdi-menu-right text-white w-full flex justify-end"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-form-select text-white"></i>
+                        <nuxt-link to="form" class=" text-white px-3 w-full">เพิ่มแบบประเมิน</nuxt-link>
+                        <i class="mdi mdi-menu-right text-white w-full flex justify-end"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-form-select text-white"></i>
+                        <nuxt-link to="result" class=" text-white px-3 w-full">ผลการประเมิน</nuxt-link>
+                        <i class="mdi mdi-menu-right text-white w-full flex justify-end"></i>
+                    </div>
                 </div>
             </div>
-            <div class="mt-3">
-                <div class="flex justify-start">
-                    <i class="mdi mdi-form-select text-white"></i>
-                    <nuxt-link to="" class=" text-white px-3 w-full">แบบประเมินบุคลากร</nuxt-link>
-                    <i class="mdi mdi-menu-right text-white w-full flex justify-end"></i>
+            <div v-if="!menuui" class="">
+                <i class="mdi mdi-menu-open flex justify-end text-3xl bg-red-950 rounded-md p-2 text-white" @click="menuui = !menuui"></i>
+                <div class="mt-3">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-logout text-white"></i>
+                        <i class="mdi mdi-menu-right text-white w-full"></i>
+                    </div>
                 </div>
-            </div>
-            <div class="mt-3">
-                <div class="flex justify-start">
-                    <i class="mdi mdi-form-select text-white"></i>
-                    <nuxt-link to="" class=" text-white px-3 w-full">ผลการประเมิน</nuxt-link>
-                    <i class="mdi mdi-menu-right text-white w-full flex justify-end"></i>
+                <div class="mt-10">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-home text-white"></i>
+                        <i class="mdi mdi-menu-right text-white w-full"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="mt-3">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-account text-white"></i>
+                        <i class="mdi mdi-menu-right text-white w-full"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-form-select text-white"></i>
+                        <i class="mdi mdi-menu-right text-white w-full"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="flex justify-start">
+                        <i class="mdi mdi-form-select text-white"></i>
+                        <i class="mdi mdi-menu-right text-white w-full"></i>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
 
-        <div v-if="!menuui" class="">
-            <i class="mdi mdi-menu-open flex justify-end text-3xl bg-red-950 rounded-md p-2 text-white" @click="menuui = !menuui"></i>
-        </div>
-        <div>
+        <div class="w-full h-screen">
             <NuxtPage />
         </div>
-        <!-- <div>
-            <label for="" @click="menuui = !menuui" :class="{'bg-red-950':menuui, 'bg-green-500':!menuui}" >test</label>
-        </div> -->
+    </div>
     </div>
 </template>
 

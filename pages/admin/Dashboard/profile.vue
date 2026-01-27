@@ -1,6 +1,6 @@
 <template>
     <div>
-index dash
+profile
     </div>
 </template>
 
