@@ -48,7 +48,75 @@ export const useService = () =>{
         }
     }
 
+    const userdata = async() => {
+        UserStore.Loaduser()
+        const token = UserStore.token
+        try {
+            const res = await axios.get("api/user/data",{
+                headers: {
+                    token: token,
+                }
+            })
+            return res.data
+        }catch(err){
+            alert(err.response.data.message)
+        }
+    }
+
+    const addhead = async(h) => {
+        UserStore.Loaduser()
+        const token = UserStore.token
+        try{
+            const res = await axios.post("",{
+                token: token,
+                head: h,
+            })
+
+            alert(res.data.data.message)
+
+        }catch(err){
+            alert(err.response.data.message)
+        }
+    }
+
+    const adddetail = async(d) => {
+        UserStore.Loaduser()
+        const token = UserStore.token
+        try{
+            const res = await axios.post("",{
+                token: token,
+                detail: d,
+            })
+
+            alert(res.data.data.message)
+
+        }catch(err){
+            alert(err.response.data.message)
+        }
+    }
+
+    const deleteform = async() => {
+        UserStore.Loaduser()
+        const token = UserStore.token
+        try{
+            const res = await axios.delete("",{
+                data: {
+                    token: token,
+                }
+            })
+
+            alert(res.response.data.message)
+
+        }catch(err){
+            alert(err.response.data.message)
+        }
+    }
+
     return {
+        deleteform,
+        addhead,
+        adddetail,
+        userdata,
         register,
         login,
     }
