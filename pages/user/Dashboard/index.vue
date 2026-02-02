@@ -18,11 +18,11 @@
                                     <label for="" class="label">{{ sec.detail }}</label>
                                 </div>
                                 <div v-if="sec.type == '1234'" class="mb-3">
-                                    <select name="" id="" class="input-field">
-                                        <option value="">1</option>
-                                        <option value="">2</option>
-                                        <option value="">3</option>
-                                        <option value="">4</option>
+                                    <select name="" class="input-field" v-model="payload[sec.section_id]">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
                                     </select>
                                 </div>
                                 <div v-if="sec.type == 'yesno'">
@@ -38,18 +38,18 @@
                                     </div>
                                 </div>
                                 <div v-if="sec.file == 1">
-                                    <input type="file" name="" id="" class="input-field">
+                                    <input type="file" name="" id="" class="input-field" @change="e => onchange(e, sec.section_id)">
                                     <label for="" class="text-red-600">*ต้องแนบหลักฐาน</label>
                                 </div>
                                 <div v-if="sec.file == 0">
-                                    <input type="file" name="" id="" class="input-field">
+                                    <input type="file" name="" id="" class="input-field" @change="e => onchange(e, sec.section_id)">
                                     <label for="" class="text-green-600">*แนบหลักฐานถ้ามี</label>
                                 </div>
                             </div>
                             </div>
                         </div>
                     </div>
-                    <div @click="sent(score,file,totalscore)" class="mt-3 flex justify-center">
+                    <div @click="saveform(payload,files)" class="mt-3 flex justify-center">
                         <button type="submit" class="btn bg-blue-600 px-5">
                             บันทึก
                         </button>
@@ -70,21 +70,27 @@
 <script setup>
 import { useService } from '#imports'
 import { ref,computed } from 'vue'
+import { Formservice } from '../../../composables/form'
 
-const { userform,sent,checktime } = useService()
+const { userform,checktime } = useService()
+const { saveform } = Formservice()
+
 
 const payload = ref({})
 
 const score = ref({})
 const episode = ref([])
-const file = ref("")
+const files = ref({})
 const open = ref(false)
 const time = ref({})
 const form = ref([])
 
+function test(){
+    console.log(payload.value)
+}
 
-function onchange(e){
-    file.value = e.target.files[0]
+function onchange(e,section_id){
+    files.value[section_id] = e.target.files[0]
 }
 
 const totalscore = computed(() => {
