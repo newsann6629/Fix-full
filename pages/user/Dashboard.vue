@@ -1,12 +1,12 @@
 <template>
-  <div class="relative">
-    <div class="flex">
+  <div class="relative h-screen overflow-hidden">
+    <div class="flex h-full">
       <div
-        class="bg-gradient-to-r from-red-950 to-red-800 h-screen px-2.5 py-3"
+        class="bg-gradient-to-r bg-blue-600 px-2.5 py-3"
       >
         <div
           v-if="menuui"
-          class="bg-gradient-to-r from-red-950 to-red-800 h-screen px-2.5 py-3"
+          class="bg-gradient-to-r bg-blue-600px-2.5 py-3"
         >
           <div class="mb-10">
             <div class="flex gap-10">
@@ -85,7 +85,7 @@
         </div>
         <div v-if="!menuui" class="">
           <i
-            class="mdi mdi-menu-open flex justify-end text-3xl bg-red-950 rounded-md p-2 text-white"
+            class="mdi mdi-menu-open flex justify-end text-3xl bg-blue-700 rounded-md p-2 text-white"
             @click="menuui = !menuui"
           ></i>
           <div class="mt-3">
@@ -123,7 +123,7 @@
         </div>
       </div>
 
-      <div class="w-full h-screen">
+      <div class="flex-1 overflow-y-auto">
         <NuxtPage />
       </div>
     </div>

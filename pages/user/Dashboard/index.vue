@@ -1,57 +1,56 @@
 <template>
-    <div class="bg-gray-200 w-full min-h-full">
+    <div class="bg-blue-200 w-full min-h-full">
         <div class="flex justify-center">
             <div class="bg-white p-6 mt-3 rounded-md">
                 <div class="border-l-blue font-bold text-3xl mb-3">
                     ระบบประเมินบุคลากรออนไลน์
                 </div>
                 <div v-if="open" class="">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div v-for="f in form" :key="f.indicator_id" class="card">
-                        <div class="">
-                            <label for="" class="font-bold text-3xl">{{ f.indicator }}</label>
-                            <div>
-                                {{ f.section }}
+                    <div class="">
+                        <div v-for="f,i in form" :key="f.indicator_id" class="card">
+                            <div class="mb-3">
+                                <label for="" class="font-bold text-3xl"> {{ i + 1 }} . {{ f.indicator }}</label>
                             </div>
-                            <div class="label">
-                                {{ f.detail }}
-                                <div v-if="f.file" class="mb-2">
-                                    <label for=""></label>
-                                    <input type="file" name="" id="" class="input-field">
-                                    <label for="" class="text-red-500">*ต้องแนบหลักฐาน</label>
+                            <div class="">
+                                <div v-for="sec,j in f.sections" :key="sec.indicator_id" class="card-t-blue mb-2">
+                                <label for="" class="font-semibold"> ตัวชี้วัดที่ {{ i + 1 }}.{{ j + 1 }} {{ sec.section }}</label>
+                                <div>
+                                    <label for="" class="label">{{ sec.detail }}</label>
                                 </div>
-                                <div v-if="!f.file">
-                                    <input type="file" name="" id="" class="input-field">
-                                    <label for="" class="text-green-500">*แนบหลักฐานได้ถ้ามี</label>
+                                <div v-if="sec.type == '1234'" class="mb-3">
+                                    <select name="" id="" class="input-field">
+                                        <option value="">1</option>
+                                        <option value="">2</option>
+                                        <option value="">3</option>
+                                        <option value="">4</option>
+                                    </select>
                                 </div>
-                                <div v-if="f.type == 1234">
-                                    <div>
-                                        <select name="" id="" class="input-field">
-                                            <option value="">1</option>
-                                            <option value="">2</option>
-                                            <option value="">3</option>
-                                            <option value="">4</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div v-if="f.type == 'yesno'" class="mt-3">
+                                <div v-if="sec.type == 'yesno'">
                                     <div class="grid grid-cols-2">
                                         <div>
-                                            <label for="">ใช่ : </label>
+                                            <label for="" class="">มี : </label>
                                             <input type="checkbox" name="" id="">
                                         </div>
                                         <div>
-                                            <label for="">ไม่ใช่ : </label>
+                                            <label for="" class="">ไม่มี : </label>
                                             <input type="checkbox" name="" id="">
                                         </div>
                                     </div>
                                 </div>
+                                <div v-if="sec.file == 1">
+                                    <input type="file" name="" id="" class="input-field">
+                                    <label for="" class="text-red-600">*ต้องแนบหลักฐาน</label>
+                                </div>
+                                <div v-if="sec.file == 0">
+                                    <input type="file" name="" id="" class="input-field">
+                                    <label for="" class="text-green-600">*แนบหลักฐานถ้ามี</label>
+                                </div>
+                            </div>
                             </div>
                         </div>
                     </div>
-                    </div>
-                    <div @click="sent(score,file,totalscore)" class="mt-3">
-                        <button type="submit" class="btn-blue">
+                    <div @click="sent(score,file,totalscore)" class="mt-3 flex justify-center">
+                        <button type="submit" class="btn bg-blue-600 px-5">
                             บันทึก
                         </button>
                     </div>
@@ -73,6 +72,8 @@ import { useService } from '#imports'
 import { ref,computed } from 'vue'
 
 const { userform,sent,checktime } = useService()
+
+const payload = ref({})
 
 const score = ref({})
 const episode = ref([])
@@ -107,32 +108,29 @@ const loadform = async() =>{
     const res = await checktime()
     time.value = res[0]
     if(res.length >= 1){
-        form.value = await userform(time.value.time_id)
+        const res = await userform(time.value.time_id)
         open.value = true
-        console.log(form.value)
+        form.value = mapdata(res[0],res[1])
     }
 }
 
 onMounted(() => {
     loadform()
 })
-// const mapdata = (ep,indicators,forms) => {
-//    const epMap = {}
 
-//    ep.forEach(e => {
-//         epMap[e.ep_id] = {...e,indicators:[]}
-//    });
-//    indicators.forEach(ind => {
-//         epMap[ind.ep_id]?.indicators.push({...ind,subs:[]})
-//    });
-//    forms.forEach(f => {
-//         Object.values(epMap).forEach(ep => {
-//             ep.indicators.find(i => (i.indicator_id == f.indicator_id))
-//             ?.subs.push({...f})
-//         });
-//     });
-//     return Object.values(epMap)
-// }
+
+
+const mapdata = (section,indicators) => {
+   const epMap = {}
+
+   indicators.forEach(ind => {
+        epMap[ind.indicator_id] = {...ind,sections:[]}
+   });
+   section.forEach(sec => {
+        epMap[sec.indicator_id]?.sections.push({...sec})
+   });
+    return Object.values(epMap)
+}
 </script>
 
 <style lang="scss" scoped>

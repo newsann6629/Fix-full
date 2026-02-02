@@ -22,7 +22,7 @@
   @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
 }
 .border-l-blue {
-  @apply border-l-4 border-blue-600 px-3
+  @apply border-l-8 border-blue-600 px-3
 }
 .input-field-disable {
   @apply w-full border border-gray-300 rounded p-2 outline-none  cursor-not-allowed;
