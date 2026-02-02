@@ -48,34 +48,8 @@
           <div class="mt-10">
             <div class="flex justify-start">
               <i class="mdi mdi-home text-white"></i>
-              <nuxt-link to="/admin/Dashboard/" class="text-white px-3 w-full"
+              <nuxt-link to="/user/Dashboard/" class="text-white px-3 w-full"
                 >หน้าแรก</nuxt-link
-              >
-              <i
-                class="mdi mdi-menu-right text-white w-full flex justify-end"
-              ></i>
-            </div>
-          </div>
-          <div class="mt-3">
-            <div class="flex justify-start">
-              <i class="mdi mdi-account-multiple text-white"></i>
-              <nuxt-link
-                to="/admin/Dashboard/group"
-                class="text-white px-3 w-full"
-                >กำหนดกรรมการ</nuxt-link
-              >
-              <i
-                class="mdi mdi-menu-right text-white w-full flex justify-end"
-              ></i>
-            </div>
-          </div>
-          <div class="mt-3">
-            <div class="flex justify-start">
-              <i class="mdi mdi-clock-plus text-white"></i>
-              <nuxt-link
-                to="/admin/Dashboard/round"
-                class="text-white px-3 w-full"
-                >กำหนดรอบการประเมิน</nuxt-link
               >
               <i
                 class="mdi mdi-menu-right text-white w-full flex justify-end"
@@ -86,7 +60,7 @@
             <div class="flex justify-start">
               <i class="mdi mdi-account text-white"></i>
               <nuxt-link
-                to="/admin/Dashboard/profile"
+                to="/user/Dashboard/profile"
                 class="text-white px-3 w-full"
                 >แก้ไขโปรไฟล์ส่วนตัว</nuxt-link
               >
@@ -97,35 +71,9 @@
           </div>
           <div class="mt-3">
             <div class="flex justify-start">
-              <i class="mdi mdi-account text-white"></i>
-              <nuxt-link
-                to="/admin/Dashboard/edituser"
-                class="text-white px-3 w-full"
-                >จัดการข้อมูลผู้ประเมิน</nuxt-link
-              >
-              <i
-                class="mdi mdi-menu-right text-white w-full flex justify-end"
-              ></i>
-            </div>
-          </div>
-          <div class="mt-3">
-            <div class="flex justify-start">
               <i class="mdi mdi-form-select text-white"></i>
               <nuxt-link
-                to="/admin/Dashboard/form"
-                class="text-white px-3 w-full"
-                >เพิ่มแบบประเมิน</nuxt-link
-              >
-              <i
-                class="mdi mdi-menu-right text-white w-full flex justify-end"
-              ></i>
-            </div>
-          </div>
-          <div class="mt-3">
-            <div class="flex justify-start">
-              <i class="mdi mdi-form-select text-white"></i>
-              <nuxt-link
-                to="/admin/Dashboard/result"
+                to="/user/Dashboard/result"
                 class="text-white px-3 w-full"
                 >ผลการประเมิน</nuxt-link
               >

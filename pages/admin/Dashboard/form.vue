@@ -20,7 +20,7 @@
     </div>
 
     <!-- List -->
-    <div
+    <!-- <div
       v-for="(item, i) in items"
       :key="i"
       class="bg-white p-4 rounded shadow mb-3 border relative"
@@ -53,7 +53,7 @@
           หลักฐาน: {{ item.requireEvidence ? "ต้องแนบ" : "ไม่ต้อง" }}
         </span>
       </div>
-    </div>
+    </div> -->
 
     <div
       v-if="items.length === 0"
@@ -74,12 +74,16 @@
           <h2 class="text-xl font-bold mb-4">เพิ่มหัวข้อใหม่</h2>
           <input
             v-model="newTopic"
-            @keyup.enter="saveTopic"
-            class="input-field"
+            class="input-field mb-3"
             placeholder="ชื่อหัวข้อ (เช่น ความรับผิดชอบ)..."
           />
+          <input
+            v-model="Topicweight"
+            class="input-field mb-3"
+            placeholder="น้ำหนักคะแนน"
+          />
           <button
-            @click="saveTopic"
+            @click="saveTopic(newTopic,Topicweight)"
             class="btn bg-green-600 hover:bg-green-700 w-full mt-4"
           >
             บันทึกหัวข้อ
@@ -93,9 +97,9 @@
           <div class="space-y-3">
             <div>
               <label class="label">หัวข้อ</label>
-              <select v-model="form.topic" class="input-field">
+              <select v-model="form.indicator_id" class="input-field">
                 <option value="" disabled>-- เลือกหัวข้อ --</option>
-                <option v-for="t in topics" :key="t" :value="t">{{ t }}</option>
+                <option v-for="t in topics" :key="t" :value="t.indicator_id">{{ t.indicator }}</option>
               </select>
               <div v-if="topics.length === 0" class="text-red-500 text-xs mt-1">
                 * กรุณาเพิ่มหัวข้อก่อน
@@ -111,22 +115,10 @@
               ></textarea>
             </div>
 
-            <div class="p-3 border rounded bg-gray-50 flex flex-col gap-2">
-              <label class="items-center flex gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  v-model="form.hasScore"
-                  class="w-4 h-4"
-                />
-                มีการให้คะแนน
-              </label>
-              <select
-                v-if="form.hasScore"
-                v-model="form.scoreLevel"
-                class="input-field text-sm"
-              >
-                <option value="4">4 ระดับ</option>
-                <option value="5">5 ระดับ</option>
+            <div>
+              <select name="" class="input-field" id="">
+                <option value="1234" class="input-field">รูปแบบการไห้คะแนนแบบ scale</option>
+                <option value="yesno" class="input-field">แบบตัวเลือก มี/ไม่มี</option>
               </select>
             </div>
 
@@ -143,7 +135,7 @@
           </div>
 
           <button
-            @click="saveFormItem"
+            @click="saveFormItem(form)"
             class="btn bg-blue-600 hover:bg-blue-700 w-full mt-6"
           >
             เพิ่มลงฟอร์ม
@@ -156,56 +148,57 @@
 
 <script setup>
 import { ref } from "vue";
+import { useService } from "../../../composables/services";
+
+const { addhead,getindi } = useService()
 
 const mode = ref(null); // null | 'topic' | 'form'
-const topics = ref(["ความตรงต่อเวลา", "การทำงานเป็นทีม"]); // Default topics
+const topics = ref([]); // Default topics
 const newTopic = ref("");
+const Topicweight = ref("");
 const items = ref([]);
 
 const form = ref({
-  topic: "",
+  indicator_id: "",
   detail: "",
   hasScore: true,
   scoreLevel: "5",
   requireEvidence: false,
 });
 
-const saveTopic = () => {
-  if (newTopic.value && !topics.value.includes(newTopic.value)) {
-    topics.value.push(newTopic.value);
-    newTopic.value = "";
-    mode.value = null; // Close or switch? Close is simpler.
+const saveTopic = async(h,w) => {
+  if (newTopic.value == "" || Topicweight.value == ""){
+    return alert("ค่าว่าง new topic topic weight")
   }
+  const res = await addhead(h,w)
 };
 
-const saveFormItem = () => {
+const saveFormItem = (f) => {
   if (!form.value.topic) return alert("กรุณาเลือกหัวข้อ");
-
-  items.value.push({
-    section: (items.value.length + 1).toString(),
-    ...form.value,
-  });
-
-  // Create new object to reset
-  form.value = {
-    topic: "",
-    detail: "",
-    hasScore: true,
-    scoreLevel: "5",
-    requireEvidence: false,
-  };
-  mode.value = null;
+  console.log(f)
 };
 
-const deleteItem = (i) => {
-  if (confirm("ลบรายการนี้?")) {
-    items.value.splice(i, 1);
-    items.value.forEach((item, idx) => (item.section = (idx + 1).toString()));
-  }
-};
+// const deleteItem = (i) => {
+//   if (confirm("ลบรายการนี้?")) {
+//     items.value.splice(i, 1);
+//     items.value.forEach((item, idx) => (item.section = (idx + 1).toString()));
+//   }
+// };
+
+const ld = async() => {
+  const res = await getindi()
+  topics.value = res
+}
+
+onMounted(() => {
+  ld()
+})
 </script>
 
-<style scoped>
+<style>
+.btn-blue {
+  @apply text-white px-3 py-2 rounded-md w-full bg-blue-600 hover:bg-blue-800 transition-colors duration-200 
+}
 .btn {
   @apply text-white px-4 py-2 rounded shadow transition-colors;
 }

@@ -1,11 +1,10 @@
-import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useUserStore } from "../composables/UserStore";
-
+import { useRouter } from "vue-router";
 
 export const useService = () =>{
     const UserStore = useUserStore()
-
+    const navigate = useRouter()
 
     const login = async(u,p) =>{
         if(u == "" || p == ""){
@@ -18,11 +17,19 @@ export const useService = () =>{
                 email: u,
                 password: p,
             })
-            UserStore.SetUser(res.data.data.token)
-            alert(res.data.data.message)
+            alert(res.data.message)
+            UserStore.SetUser(res.data.auth)
+            UserStore.LoadUser()
+            console.log(UserStore.user)
+            if(UserStore.user.role == "1"){
+                navigate.push("/admin/Dashboard/")
+            }
+            else{
+                navigate.push("/user/Dashboard/")
+            }
         }
         catch(err){
-            alert(err.response.data.message)
+            console.log(err.response?.data.message)
         }
         
     }
@@ -49,7 +56,7 @@ export const useService = () =>{
     }
 
     const userdata = async() => {
-        UserStore.Loaduser()
+        UserStore.LoadUser()
         const token = UserStore.token
         try {
             const res = await axios.get("api/user/data",{
@@ -63,13 +70,14 @@ export const useService = () =>{
         }
     }
 
-    const addhead = async(h) => {
-        UserStore.Loaduser()
+    const addhead = async(h,w) => {
+        UserStore.LoadUser()
         const token = UserStore.token
         try{
-            const res = await axios.post("",{
+            const res = await axios.post("api/admin/indicator",{
                 token: token,
-                head: h,
+                indicator: h,
+                weight: w,
             })
 
             alert(res.data.data.message)
@@ -79,13 +87,13 @@ export const useService = () =>{
         }
     }
 
-    const adddetail = async(d) => {
-        UserStore.Loaduser()
+    const adddetail = async(id) => {
+        UserStore.LoadUser()
         const token = UserStore.token
         try{
             const res = await axios.post("",{
                 token: token,
-                detail: d,
+                detail: id,
             })
 
             alert(res.data.data.message)
@@ -95,25 +103,98 @@ export const useService = () =>{
         }
     }
 
-    const deleteform = async() => {
-        UserStore.Loaduser()
+    // const deleteform = async() => {
+    //     UserStore.LoadUser()
+    //     const token = UserStore.token
+    //     try{
+    //         const res = await axios.delete("",{
+    //             data: {
+    //                 token: token,
+    //             }
+    //         })
+
+    //         alert(res.response.data.message)
+
+    //     }catch(err){
+    //         alert(err.response.data.message)
+    //     }
+    // }
+    const time = async() => {
+        try{
+            const res = await axios.get("api/admin/time")
+            // console.log(res.data)
+            return res.data
+        }catch(err){
+            alert(err.response.data.message)
+        }
+    }
+
+    const addtime = async(t1,t2) => {
+        UserStore.LoadUser()
+        try{
+            const res = await axios.post("api/admin/time",{
+                token: UserStore.token,
+                time1: t1,
+                time2: t2
+            })
+            alert("Settime Success")
+        }catch(err){
+            alert(err.response.data.message)
+        }
+    }
+
+    const addgroup = async(g) => {
+        UserStore.LoadUser()
+        const token = UserStore.token
+        console.log(g)
+        try{
+            const res = await axios.post("api/admin/group",{
+                token: token,
+                member: g,
+            })
+            console.log(res)
+        }catch(err){
+            alert(err)
+        }
+    }
+
+    const getalluser = async() => {
+        UserStore.LoadUser()
         const token = UserStore.token
         try{
-            const res = await axios.delete("",{
-                data: {
-                    token: token,
+            const res = await axios.get("api/admin/user",{
+                headers: {
+                    token: token
+                }
+            }) 
+            return res.data.data
+        }catch(err){
+            console.log(err.response?.data.message)
+        }
+    }
+
+    const getindi = async() => {
+        UserStore.LoadUser()
+        const token = UserStore.token
+        try{
+            const res = await axios.get("api/admin/indicator",{
+                headers: {
+                    token: token
                 }
             })
-
-            alert(res.response.data.message)
-
+            return res.data.data
         }catch(err){
-            alert(err.response.data.message)
+            alert("Something Went Wrong")
+            console.log(err)
         }
     }
 
     return {
-        deleteform,
+        getindi,
+        getalluser,
+        addgroup,
+        addtime,
+        time,
         addhead,
         adddetail,
         userdata,
