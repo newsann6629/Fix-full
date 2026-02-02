@@ -19,42 +19,7 @@
       </div>
     </div>
 
-    <!-- List -->
-    <!-- <div
-      v-for="(item, i) in items"
-      :key="i"
-      class="bg-white p-4 rounded shadow mb-3 border relative"
-    >
-      <button
-        @click="deleteItem(i)"
-        class="absolute top-2 right-2 text-red-500 hover:text-red-700 font-bold"
-      >
-        X
-      </button>
-
-      <div class="mb-2">
-        <span class="badge bg-gray-200">ตอนที่ {{ item.section }}</span>
-        <span class="font-bold text-lg ml-2">{{ item.topic }}</span>
-      </div>
-      <p class="text-gray-600 mb-2">{{ item.detail }}</p>
-
-      <div class="text-sm space-x-3">
-        <span class="text-blue-800 bg-blue-50 px-2 py-1 rounded">
-          คะแนน: {{ item.hasScore ? `มี (${item.scoreLevel} ระดับ)` : "ไม่มี" }}
-        </span>
-        <span
-          :class="
-            item.requireEvidence
-              ? 'text-green-800 bg-green-50'
-              : 'text-gray-500 bg-gray-100'
-          "
-          class="px-2 py-1 rounded"
-        >
-          หลักฐาน: {{ item.requireEvidence ? "ต้องแนบ" : "ไม่ต้อง" }}
-        </span>
-      </div>
-    </div> -->
-
+    <!-- Empty state -->
     <div
       v-if="items.length === 0"
       class="text-center text-gray-500 py-10 border-2 border-dashed rounded"
@@ -62,71 +27,90 @@
       ยังไม่มีข้อมูล
     </div>
 
-    <!-- Unified Modal Overlay -->
+    <!-- Modal Overlay -->
     <div
       v-if="mode"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      class="model-overlay"
       @click.self="mode = null"
     >
       <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-        <!-- 1. Add Topic Mode -->
+
+        <!-- ================= Add Topic ================= -->
         <div v-if="mode === 'topic'">
           <h2 class="text-xl font-bold mb-4">เพิ่มหัวข้อใหม่</h2>
+
           <input
             v-model="newTopic"
             class="input-field mb-3"
-            placeholder="ชื่อหัวข้อ (เช่น ความรับผิดชอบ)..."
+            placeholder="ชื่อหัวข้อ (เช่น ความรับผิดชอบ)"
           />
+
           <input
             v-model="Topicweight"
             class="input-field mb-3"
             placeholder="น้ำหนักคะแนน"
           />
+
           <button
-            @click="saveTopic(newTopic,Topicweight)"
+            @click="saveTopic"
             class="btn bg-green-600 hover:bg-green-700 w-full mt-4"
           >
             บันทึกหัวข้อ
           </button>
         </div>
 
-        <!-- 2. Add Form Item Mode -->
+        <!-- ================= Add Form Item ================= -->
         <div v-else-if="mode === 'form'">
           <h2 class="text-xl font-bold mb-4">เพิ่มลงแบบฟอร์ม</h2>
 
           <div class="space-y-3">
+            <!-- topic -->
+            <div>
+              <label for="" class="label">เพิ่มตัวชี้วัด</label>
+              <input type="text" name="" v-model="head" id="" class="input-field">
+            </div>
             <div>
               <label class="label">หัวข้อ</label>
-              <select v-model="form.indicator_id" class="input-field">
+              <select v-model="indicator" class="input-field">
                 <option value="" disabled>-- เลือกหัวข้อ --</option>
-                <option v-for="t in topics" :key="t" :value="t.indicator_id">{{ t.indicator }}</option>
+                <option
+                  v-for="t in topics"
+                  :key="t.indicator_id"
+                  :value="t.indicator_id"
+                >
+                  {{ t.indicator }}
+                </option>
               </select>
+
               <div v-if="topics.length === 0" class="text-red-500 text-xs mt-1">
                 * กรุณาเพิ่มหัวข้อก่อน
               </div>
             </div>
 
+            <!-- detail -->
             <div>
               <label class="label">รายละเอียด</label>
               <textarea
-                v-model="form.detail"
+                v-model="detail"
                 rows="3"
                 class="input-field"
               ></textarea>
             </div>
 
+            <!-- score type (placeholder) -->
             <div>
-              <select name="" class="input-field" id="">
-                <option value="1234" class="input-field">รูปแบบการไห้คะแนนแบบ scale</option>
-                <option value="yesno" class="input-field">แบบตัวเลือก มี/ไม่มี</option>
+              <select class="input-field" v-model="type">
+                <option value="1234">รูปแบบการให้คะแนนแบบ scale</option>
+                <option value="yesno">แบบตัวเลือก มี / ไม่มี</option>
               </select>
             </div>
 
+            <!-- evidence -->
             <div class="p-3 border rounded bg-gray-50">
-              <label class="items-center flex gap-2 cursor-pointer">
+              <label class="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  v-model="form.requireEvidence"
+                  v-model="requireEvidence"
                   class="w-4 h-4 text-green-600"
                 />
                 <span class="font-medium">ต้องการหลักฐานประกอบ</span>
@@ -135,80 +119,77 @@
           </div>
 
           <button
-            @click="saveFormItem(form)"
+            @click="addform(indicator,detail,type,requireEvidence,head)"
             class="btn bg-blue-600 hover:bg-blue-700 w-full mt-6"
           >
             เพิ่มลงฟอร์ม
           </button>
         </div>
+
       </div>
     </div>
   </div>
 </template>
 
+
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useService } from "../../../composables/services";
 
-const { addhead,getindi } = useService()
+const { addhead, getindi, addform } = useService()
 
-const mode = ref(null); // null | 'topic' | 'form'
-const topics = ref([]); // Default topics
-const newTopic = ref("");
-const Topicweight = ref("");
-const items = ref([]);
+const mode = ref(null)
+const topics = ref([])
+const newTopic = ref("")
+const Topicweight = ref("")
+const items = ref([])
 
-const form = ref({
-  indicator_id: "",
-  detail: "",
-  hasScore: true,
-  scoreLevel: "5",
-  requireEvidence: false,
-});
+/* ===== form fields (ไม่ใช้ object) ===== */
+const head = ref("")
+const indicator = ref("")
+const detail = ref("")
+const type = ref("1234")
+const requireEvidence = ref(false)
 
-const saveTopic = async(h,w) => {
-  if (newTopic.value == "" || Topicweight.value == ""){
-    return alert("ค่าว่าง new topic topic weight")
+/* ===== actions ===== */
+const saveTopic = async () => {
+  if (!newTopic.value || !Topicweight.value) {
+    return alert("ค่าว่าง new topic / topic weight")
   }
-  const res = await addhead(h,w)
-};
-
-const saveFormItem = (f) => {
-  if (!form.value.topic) return alert("กรุณาเลือกหัวข้อ");
-  console.log(f)
-};
-
-// const deleteItem = (i) => {
-//   if (confirm("ลบรายการนี้?")) {
-//     items.value.splice(i, 1);
-//     items.value.forEach((item, idx) => (item.section = (idx + 1).toString()));
-//   }
-// };
-
-const ld = async() => {
-  const res = await getindi()
-  topics.value = res
+  await addhead(newTopic.value, Topicweight.value)
+  newTopic.value = ""
+  Topicweight.value = ""
 }
 
-onMounted(() => {
-  ld()
-})
+// const saveFormItem = async () => {
+//   if (!indicatorId.value) {
+//     return alert("กรุณาเลือกหัวข้อ")
+//   }
+
+//   // const payload = {
+//   //   indicator_id: indicatorId.value,
+//   //   detail: detail.value,
+//   //   hasScore: hasScore.value,
+//   //   requireEvidence: requireEvidence.value,
+//   // }
+
+//   // console.log("ส่งข้อมูล:", payload)
+//   // await addform(payload)
+
+//   // reset
+//   indicatorId.value = ""
+//   detail.value = ""
+//   hasScore.value = true
+//   requireEvidence.value = false
+//   mode.value = null
+// }
+
+const ld = async () => {
+  topics.value = await getindi()
+}
+
+onMounted(ld)
 </script>
 
 <style>
-.btn-blue {
-  @apply text-white px-3 py-2 rounded-md w-full bg-blue-600 hover:bg-blue-800 transition-colors duration-200 
-}
-.btn {
-  @apply text-white px-4 py-2 rounded shadow transition-colors;
-}
-.input-field {
-  @apply w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none;
-}
-.label {
-  @apply block text-sm font-medium text-gray-700 mb-1;
-}
-.badge {
-  @apply px-2 py-1 text-xs font-bold rounded text-gray-700;
-}
 </style>

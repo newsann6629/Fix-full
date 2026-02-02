@@ -1,46 +1,63 @@
 <template>
-    <div class="bg-gray-200 w-screen h-full">
+    <div class="bg-gray-200 w-full min-h-full">
         <div class="flex justify-center">
             <div class="bg-white p-6 mt-3 rounded-md">
-                <div class="text-3xl font-bold mb-3">
+                <div class="border-l-blue font-bold text-3xl mb-3">
                     ระบบประเมินบุคลากรออนไลน์
                 </div>
-                <div v-if="episode.length >= 1">
-                    <div v-for="ep in episode" :key="ep.ep_id" class="border rounded-md px-3 py-3">
-                    <div class="font-bold text-3xl">
-                        {{ ep.ep }}
-                    </div>
-                    <div v-for="ind,i in ep.indicators" :key="ind.ep_id">
-                        <div class="font-semibold px-5">
-                            {{ i + 1 }}.{{ ind.indicator }}
-                        </div>
-                        <div v-for="f,j in ind.subs" :key="f.indicator_id">
-                            <div class="px-10">
-                                {{ i + 1 }}.{{ j + 1 }} {{ f.form }}
+                <div v-if="open" class="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div v-for="f in form" :key="f.indicator_id" class="card">
+                        <div class="">
+                            <label for="" class="font-bold text-3xl">{{ f.indicator }}</label>
+                            <div>
+                                {{ f.section }}
                             </div>
-                            <div class="flex justify-end">
-                                <select name="" id="" class="border rounded-md py-2.5 px-3" v-model="score[f.form_id]">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                </select>
+                            <div class="label">
+                                {{ f.detail }}
+                                <div v-if="f.file" class="mb-2">
+                                    <label for=""></label>
+                                    <input type="file" name="" id="" class="input-field">
+                                    <label for="" class="text-red-500">*ต้องแนบหลักฐาน</label>
+                                </div>
+                                <div v-if="!f.file">
+                                    <input type="file" name="" id="" class="input-field">
+                                    <label for="" class="text-green-500">*แนบหลักฐานได้ถ้ามี</label>
+                                </div>
+                                <div v-if="f.type == 1234">
+                                    <div>
+                                        <select name="" id="" class="input-field">
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div v-if="f.type == 'yesno'" class="mt-3">
+                                    <div class="grid grid-cols-2">
+                                        <div>
+                                            <label for="">ใช่ : </label>
+                                            <input type="checkbox" name="" id="">
+                                        </div>
+                                        <div>
+                                            <label for="">ไม่ใช่ : </label>
+                                            <input type="checkbox" name="" id="">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <input type="file" name="" class="border rounded-md w-full px-2.5 py-3" id="" @change="onchange($event)">
-                </div>
-                <div @click="sent(score,file,totalscore)">
-                    <button type="submit" class="bg-red-800 hover:bg-red-950 text-white py-2.5 px-2.5 rounded-md">
-                        บันทึก
-                    </button>
-                </div>
-                {{ totalscore }}
+                    </div>
+                    <div @click="sent(score,file,totalscore)" class="mt-3">
+                        <button type="submit" class="btn-blue">
+                            บันทึก
+                        </button>
+                    </div>
                 </div>
 
-                <div v-if="episode.length == 0">
+                <div v-if="!open">
                     <div class="broder border-2 border-dashed rounded-md py-2.5 px-2.5 text-center text-gray-600">
                         <label for="">ไม่มีแบบฟอร์มในขณะนี้</label>
                     </div>
@@ -55,11 +72,15 @@
 import { useService } from '#imports'
 import { ref,computed } from 'vue'
 
-const { userform,sent } = useService()
+const { userform,sent,checktime } = useService()
 
 const score = ref({})
 const episode = ref([])
 const file = ref("")
+const open = ref(false)
+const time = ref({})
+const form = ref([])
+
 
 function onchange(e){
     file.value = e.target.files[0]
@@ -81,35 +102,37 @@ const totalscore = computed(() => {
     return sum
 })
 
-const mapdata = (ep,indicators,forms) => {
-   const epMap = {}
-
-   ep.forEach(e => {
-        epMap[e.ep_id] = {...e,indicators:[]}
-   });
-   indicators.forEach(ind => {
-        epMap[ind.ep_id]?.indicators.push({...ind,subs:[]})
-   });
-   forms.forEach(f => {
-        Object.values(epMap).forEach(ep => {
-            ep.indicators.find(i => (i.indicator_id == f.indicator_id))
-            ?.subs.push({...f})
-        });
-    });
-    return Object.values(epMap)
-}
 
 const loadform = async() =>{
-    const res = await userform()
-    const ep = res.data.data[0]
-    const indicators = res.data.data[1]
-    const forms = res.data.data[2]
-    episode.value = mapdata(ep || [] , indicators || [] ,forms || [])
+    const res = await checktime()
+    time.value = res[0]
+    if(res.length >= 1){
+        form.value = await userform(time.value.time_id)
+        open.value = true
+        console.log(form.value)
+    }
 }
 
 onMounted(() => {
     loadform()
 })
+// const mapdata = (ep,indicators,forms) => {
+//    const epMap = {}
+
+//    ep.forEach(e => {
+//         epMap[e.ep_id] = {...e,indicators:[]}
+//    });
+//    indicators.forEach(ind => {
+//         epMap[ind.ep_id]?.indicators.push({...ind,subs:[]})
+//    });
+//    forms.forEach(f => {
+//         Object.values(epMap).forEach(ep => {
+//             ep.indicators.find(i => (i.indicator_id == f.indicator_id))
+//             ?.subs.push({...f})
+//         });
+//     });
+//     return Object.values(epMap)
+// }
 </script>
 
 <style lang="scss" scoped>

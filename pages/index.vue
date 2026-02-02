@@ -1,10 +1,10 @@
 <template>
     <div class="bg-gray-200 w-screen h-screen">
-        <div class="flex bg-red-800 h-60 w-screen">
+        <div class="flex bg-blue-700 h-60 w-screen">
             <div>
                 <img class="flex w-20 h-20 rounded-full px-2 py-2 " src="" alt="">
             </div>
-            <div class="flex justify-center text-center items-center w-full h-full text-white font-semibold text-3xl">
+            <div class="flex justify-center text-center items-center w-full h-full text-white  text-3xl">
                 <label for="">ระบบประเมินบุคลากรออนไลน์</label>
             </div>
         </div>
@@ -16,31 +16,31 @@
                         {{ time.time }}
                     </div>
                     <div>
-                        <label for="">เริ่มการประเมิน {{ time.start }}</label>
+                        <label for="">เริ่มการประเมิน {{ TH(time.start) }}</label>
                     </div>
                     <div>
-                        <label for="">ปิดการประเมิน {{ time.expire }}</label>
+                        <label for="">ปิดการประเมิน {{ TH(time.expire) }}</label>
                     </div>
                 </div>
             </div>
             <div class="flex justify-end px-2 py-2 ">
                 <div>
-                    <div class="bg-white p-6 mt-2 mb-2 rounded-md">
+                    <div class="card-t-blue">
                         <div class="text-center">
-                            <label class="font-bold text-2xl" for="">Login</label>
+                            <label class="font-bold " for="">LOGIN</label>
                         </div>
                         <div class="mt-2">
-                            <label for="">Username</label>
-                            <input class="border w-full py-2.5 px-3 rounded-md" type="text" name="" id="" v-model="u">
+                            <label class="label" for="">Username</label>
+                            <input class="input-field" type="text" name="" id="" v-model="u">
                         </div>
                          <div class="mt-2">
-                            <label for="">Password</label>
-                            <input class="border w-full py-2.5 px-3 rounded-md" type="password" name="" id="" v-model="p">
+                            <label class="label" for="">Password</label>
+                            <input class="input-field" type="password" name="" id="" v-model="p">
                         </div>
                         <div>
-                            <button class="bg-red-800 hover:br-red-950 w-full text-white px-2 py-1 rounded-md mt-1" @click="login(u,p)">เข้าสู่ระบบ</button>
+                            <button class="btn-blue mt-2" @click="login(u,p)">เข้าสู่ระบบ</button>
                         </div>
-                        <div class="mt-1">
+                        <div class="mt-2">
                             <nuxt-link class="text-blue-500" to="register">ลงทะเบียน</nuxt-link>
                         </div>
                     </div>
@@ -60,11 +60,24 @@ const u = ref("")
 const p = ref("")
 const t = ref([""])
 
+// const formatDateTH = (dateStr) => {
+//   const d = new Date(dateStr)
+
+//   const day = d.getDate()
+//   const month = d.getMonth() + 1
+//   const year = d.getFullYear() + 543 // แปลงเป็น พ.ศ.
+
+//   return `${day}/${month}/${year}`
+// }
+
+const TH = (datestr) => {
+    return new Date(datestr).toLocaleDateString("th-TH")
+}
+
 
 const loadtime = async() => {
     const res = await time()
     t.value = res.data
-    console.log(t.value)
 }
 
 onMounted(() => {
@@ -73,6 +86,6 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
+<style>
 
 </style>
