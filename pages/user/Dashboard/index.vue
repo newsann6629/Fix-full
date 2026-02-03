@@ -29,27 +29,27 @@
                                     <div class="grid grid-cols-2">
                                         <div>
                                             <label for="" class="">มี : </label>
-                                            <input type="checkbox" name="" id="">
+                                            <input type="radio" v-model="payload[sec.section_id]" value="yes" name="" id="">
                                         </div>
                                         <div>
                                             <label for="" class="">ไม่มี : </label>
-                                            <input type="checkbox" name="" id="">
+                                            <input type="radio" name="" v-model="payload[sec.section_id]" value="no" id="">
                                         </div>
                                     </div>
                                 </div>
                                 <div v-if="sec.file == 1">
                                     <input type="file" name="" id="" class="input-field" @change="e => onchange(e, sec.section_id)">
-                                    <label for="" class="text-red-600">*ต้องแนบหลักฐาน</label>
+                                    <label for="" class="text-red-600">*เอกสารเพิ่มเติม</label>
                                 </div>
                                 <div v-if="sec.file == 0">
                                     <input type="file" name="" id="" class="input-field" @change="e => onchange(e, sec.section_id)">
-                                    <label for="" class="text-green-600">*แนบหลักฐานถ้ามี</label>
+                                    <label for="" class="text-green-600">*แนบหลักฐานตัวชี้วัด</label>
                                 </div>
                             </div>
                             </div>
                         </div>
                     </div>
-                    <div @click="saveform(payload,files)" class="mt-3 flex justify-center">
+                    <div @click="saveform(payload,files,time)" class="mt-3 flex justify-center">
                         <button type="submit" class="btn bg-blue-600 px-5">
                             บันทึก
                         </button>
@@ -93,21 +93,21 @@ function onchange(e,section_id){
     files.value[section_id] = e.target.files[0]
 }
 
-const totalscore = computed(() => {
-    let sum = 0
-    if(!Array.isArray(episode.value)) return 0
+// const totalscore = computed(() => {
+//     let sum = 0
+//     if(!Array.isArray(episode.value)) return 0
 
-    episode.value.forEach(ep => {
-        ep.indicators?.forEach(ind => {
-            ind.subs?.forEach(subs => {
-                const s = Number(score.value[subs.form_id] || 0)
-                sum += s * ep.weight
-            });
-        });
-    });
+//     episode.value.forEach(ep => {
+//         ep.indicators?.forEach(ind => {
+//             ind.subs?.forEach(subs => {
+//                 const s = Number(score.value[subs.form_id] || 0)
+//                 sum += s * ep.weight
+//             });
+//         });
+//     });
 
-    return sum
-})
+//     return sum
+// })
 
 
 const loadform = async() =>{
