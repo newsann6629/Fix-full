@@ -37,40 +37,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-for="score in sec.scores" :key="score.section_id">
-                                    <div class="">
-                                        <div class="grid grid-cols-2">
-                                            <div>
-                                                <label class="label" for="">คะนแนนที่ประเมินตนเอง</label>
-                                            </div>
-                                            <div>
-                                                {{ score.selfscore }}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div v-if="score.filename">
-                                                <div class="">
-                                                    <a :href="`http://192.168.88.252:3000/file/${encodeURIComponent(score.filename)}`"><i class=" mdi mdi-file-document text-blue-600 text-3xl"></i></a>
-                                                </div>
-                                            </div>
-                                            <div v-if="!score.filename">
-                                                    <nuxt-link to=""><i class=" mdi mdi-file-document text-red-600 text-3xl"></i></nuxt-link>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div v-if="sec.file == 1">
+                                    <input type="file" name="" id="" class="input-field" @change="e => onchange(e, sec.section_id)">
+                                    <label for="" class="text-red-600">*เอกสารเพิ่มเติม</label>
+                                </div>
+                                <div v-if="sec.file == 0">
+                                    <input type="file" name="" id="" class="input-field" @change="e => onchange(e, sec.section_id)">
+                                    <label for="" class="text-green-600">*แนบหลักฐานตัวชี้วัด</label>
                                 </div>
                             </div>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <input class="input-field" type="file" name="" id="" @change="onchange">
-                    </div>
-                    <div class="mt-3">
-                        <input class="input-field" type="text" name="" id="" v-model="comment" placeholder="comment">
-                    </div>
-                    <div class="mt-3 flex justify-center">
-                        <button type="submit" class="btn bg-blue-600 px-5" @click="sfb(payload,files,time.time_id,userid,comment)">
+                    <div @click="saveform(payload,files,time)" class="mt-3 flex justify-center">
+                        <button type="submit" class="btn bg-blue-600 px-5">
                             บันทึก
                         </button>
                     </div>
@@ -88,32 +68,29 @@
 </template>
 
 <script setup>
-import { useService } from '../../../../composables/services'
+import { useService } from '#imports'
 import { ref,computed } from 'vue'
-import { Formservice } from '../../../../composables/form'
-import { useRoute } from 'vue-router/auto-routes'
-
+import { Formservice } from '../../../composables/form'
 
 const { userform,checktime } = useService()
+const { saveform } = Formservice()
 
-const { sfb,boardform } = Formservice()
 
-const route = useRoute()
 const payload = ref({})
-const userid = route.params.id
 
-const comment = ref("")
+const score = ref({})
+const episode = ref([])
 const files = ref({})
 const open = ref(false)
 const time = ref({})
 const form = ref([])
 
 function test(){
-    console.log(files)
+    console.log(payload.value)
 }
 
-function onchange(e){
-    files.value = e.target.files[0]
+function onchange(e,section_id){
+    files.value[section_id] = e.target.files[0]
 }
 
 // const totalscore = computed(() => {
@@ -137,10 +114,9 @@ const loadform = async() =>{
     const res = await checktime()
     time.value = res[0]
     if(res.length >= 1){
-        const f = await boardform(userid,time.value.time_id)
+        const res = await userform(time.value.time_id)
         open.value = true
-        form.value = mapdata(f[0] , f[1] , f[2])
-        console.log(form.value)
+        form.value = mapdata(res[0],res[1])
     }
 }
 
@@ -150,41 +126,17 @@ onMounted(() => {
 
 
 
-const mapdata = (section,indicators,score) => {
+const mapdata = (section,indicators) => {
    const epMap = {}
+
    indicators.forEach(ind => {
         epMap[ind.indicator_id] = {...ind,sections:[]}
    });
    section.forEach(sec => {
-        epMap[sec.indicator_id]?.sections.push({...sec,scores:[]})
-   });
-   score.forEach(sc => {
-        Object.values(epMap).forEach(section => {
-            section.sections.find(i => (i.section_id == sc.section_id))
-            ?.scores.push({...sc})
-        });
+        epMap[sec.indicator_id]?.sections.push({...sec})
    });
     return Object.values(epMap)
 }
-
-
-// const mapdata = (ep,indicators,forms) => {
-//    const epMap = {}
-
-//    ep.forEach(e => {
-//         epMap[e.ep_id] = {...e,indicators:[]}
-//    });
-//    indicators.forEach(ind => {
-//         epMap[ind.ep_id]?.indicators.push({...ind,subs:[]})
-//    });
-//    forms.forEach(f => {
-//         Object.values(epMap).forEach(ep => {
-//             ep.indicators.find(i => (i.indicator_id == f.indicator_id))
-//             ?.subs.push({...f})
-//         });
-//     });
-//     return Object.values(epMap)
-// }
 </script>
 
 <style lang="scss" scoped>
