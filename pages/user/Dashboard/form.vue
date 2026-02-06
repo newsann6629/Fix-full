@@ -84,6 +84,9 @@ const files = ref({})
 const open = ref(false)
 const time = ref({})
 const form = ref([])
+const total = ref(0)
+
+
 
 function test(){
     console.log(payload.value)

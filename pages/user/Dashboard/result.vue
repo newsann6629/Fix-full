@@ -20,36 +20,41 @@
 
         <tbody>
           <tr
-            v-for="(user, index) in evaluationData"
-            :key="index"
+            v-for="(u, i) in user"
+            :key="i"
             class="hover:bg-gray-50"
           >
             <td class="border px-4 py-2">
-              {{ index + 1 }}
+              {{ i }}
             </td>
 
             <td class="border px-4 py-2">
-              {{ user.userName }}
+              {{ u.user_username }}
             </td>
 
             <td class="border px-4 py-2">
-              {{ user.boardName ?? 'ยังไม่ระบุกรรมการ' }}
+              {{ u.board_username ?? 'ยังไม่ระบุกรรมการ' }}
             </td>
 
             <td class="border px-4 py-2 text-center">
-              {{ user.selfScore ?? 'ยังไม่ประเมิน' }}
+              {{ u.selfsum ?? 'ยังไม่ประเมิน' }}
             </td>
 
             <td class="border px-4 py-2 text-center">
-              {{ user.judgeScore ?? 'ยังไม่ประเมิน' }}
+                <div v-if="!u.board_username">
+                  {{'ยังไม่ประเมิน' }}
+                </div>
+                <div v-if="u.board_username">
+                  {{ u.boardsum }}
+                </div>
             </td>
 
             <td class="border px-4 py-2 text-center">
-              {{ user.comment ?? 'ยังไม่ประเมิน' }}
+              {{ u.comment ?? 'ยังไม่ประเมิน' }}
             </td>
           </tr>
 
-          <tr>
+          <tr v-if="!user">
             <td colspan="6" class="text-center py-6 text-gray-500">
               ไม่มีข้อมูลการประเมิน
             </td>
@@ -63,12 +68,15 @@
 
 <script setup>
 import { Formservice } from '../../../composables/form';
-
+import { ref } from 'vue';
 const {userresult} = Formservice()
+
+const user = ref("")
 
 const ld = async() => {
   try {
     const res = await userresult()
+    user.value = res
     console.log(res)
   }catch(err){
     console.log(err)

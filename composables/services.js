@@ -198,26 +198,26 @@ export const useService = () =>{
         }
     }
 
-    const addgroup = async(g) => {
+    const addgroup = async(b,r) => {
         UserStore.LoadUser()
         const token = UserStore.token
-        console.log(g)
         try{
-            const res = await axios.post("api/admin/group",{
+            const res = await axios.post("api/admin/boardsign",{
                 token: token,
-                member: g,
+                board_id: b,
+                role:r,
             })
-            console.log(res)
+            window.location.reload()
         }catch(err){
             alert(err)
         }
     }
 
-    const getgroup = async(g) => {
+    const brole = async(g) => {
         UserStore.LoadUser()
         const token = UserStore.token
         try{
-            const res = await axios.get("api/admin/group",{
+            const res = await axios.get("api/admin/boardrole",{
                 token: token,
                 member: g,
             })
@@ -315,7 +315,7 @@ export const useService = () =>{
         UserStore.LoadUser()
         const token = UserStore.token
         try{
-            const res = await axios.delete(`api/admin/group/${id}`,{
+            const res = await axios.delete(`api/admin/boardsign/${id}`,{
                 data:{
                     token: token
                 }
@@ -329,9 +329,19 @@ export const useService = () =>{
         }
     }
 
+    const allb = async() => {
+        try{
+            const res = await axios.get("api/admin/boardsign")
+            return res.data.data
+        }catch(err){
+            console.log(err)
+        }
+    }
+
     return {
+        allb,
         delgroup,
-        getgroup,
+        brole,
         checktime,
         userform,
         deluser,

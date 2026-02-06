@@ -73,12 +73,12 @@ export const Formservice = () => {
         UserStore.LoadUser()
         const token =UserStore.token
         try{
-            const res = await axios.get("api/user/result",{
+            const res = await axios.get(`api/user/result/${UserStore.id}`,{
                 headers: {
                     token: token
                 }
             })
-            return res
+            return res.data.data
         }catch(err){
             alert("Something went wrong")
             console.log(err)
