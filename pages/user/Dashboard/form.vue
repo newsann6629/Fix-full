@@ -6,7 +6,7 @@
                     ระบบประเมินบุคลากรออนไลน์
                 </div>
                 <div v-if="open" class="">
-                    <div class="">
+                    <div class="" v-if="form.length >= 1">
                         <div v-for="f,i in form" :key="f.indicator_id" class="card">
                             <div class="mb-3">
                                 <label for="" class="font-bold text-3xl"> {{ i + 1 }} . {{ f.indicator }}</label>
@@ -48,11 +48,16 @@
                             </div>
                             </div>
                         </div>
+                        <div @click="saveform(payload,files,time)" class="mt-3 flex justify-center">
+                            <button type="submit" class="btn bg-blue-600 px-5">
+                                บันทึก
+                            </button>
+                        </div>
                     </div>
-                    <div @click="saveform(payload,files,time)" class="mt-3 flex justify-center">
-                        <button type="submit" class="btn bg-blue-600 px-5">
-                            บันทึก
-                        </button>
+                    <div v-if="form.length == 0">
+                        <div class="border border-dashed p-6 rounded-md text-gray-500 text-center">
+                            <label for="">ทำแบบฟอร์มไปแล้ว</label>
+                        </div>
                     </div>
                 </div>
 

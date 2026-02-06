@@ -36,7 +36,9 @@ export const Formservice = () => {
         const token = UserStore.token
         try{
             const res = await axios.post("api/user/result",fd)
+            alert("บันทึกแบบฟอร์มสำเร็จ")
             console.log(res)
+            window.location.reload()
         }catch(err){
             alert("Something Went Wrong")
             console.log(err)
@@ -62,7 +64,9 @@ export const Formservice = () => {
         const token = UserStore.token
         try{
             const res = await axios.post("api/board/result",fd)
+            alert("บันทึกแบบฟอร์มสำเร็จ")
             console.log(res)
+            window.location.reload()
         }catch(err){
             alert("Something Went Wrong")
             console.log(err)
@@ -90,9 +94,10 @@ export const Formservice = () => {
         const token = UserStore.token
         const id = UserStore.id
         try{
-            const res = await axios.get(`api/board/user/${id}`,{
+            const res = await axios.get("api/board/user/",{
                 headers: {
-                    token: token
+                    token: token,
+                    board_id: UserStore.id
                 }
             })
             return res.data.data
@@ -108,6 +113,7 @@ export const Formservice = () => {
             const res = await axios.get("api/board/form",{
                 headers: {
                     token: UserStore.token,
+                    board_id: UserStore.id,
                     user_id: uid,
                     time_id: tid
                 }

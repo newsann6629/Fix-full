@@ -1,76 +1,140 @@
 <template>
-  <div class="p-5">
-    <h1 class="text-xl font-bold mb-5 text-red-800">จับคู่ผู้ประเมิน</h1>
-
-    <div class="bg-white p-5 rounded shadow">
-      <!-- 1. เลือกคนที่จะถูกประเมิน -->
-      <div class="mb-4">
-        <label class="block font-bold mb-2"
-          >1. เลือกผู้ที่จะถูกประเมิน (คนที่ประเมินตัวเองแล้ว):</label
-        >
-        <select v-model="selectedUser" class="w-full p-2 border rounded">
-          <option value="" disabled>--- กรุณาเลือกคน ---</option>
-          <option v-for="user in users" :key="user" :value="user">
-            {{ user }}
-          </option>
-        </select>
-      </div>
-
-      <!-- 2. เลือกกลุ่มกรรมการ -->
-      <div class="mb-4">
-        <label class="block font-bold mb-2"
-          >2. เลือกกลุ่มกรรมการที่จะให้ไปประเมิน:</label
-        >
-        <select v-model="selectedGroup" class="w-full p-2 border rounded">
-          <option value="" disabled>--- กรุณาเลือกกลุ่ม ---</option>
-          <option
-            v-for="(group, index) in groups"
-            :key="index"
-            :value="index + 1"
-          >
-            กลุ่มที่ {{ index + 1 }} ({{ group.join(", ") }})
-          </option>
-        </select>
-      </div>
-
-      <!-- ปุ่มกดยืนยัน -->
-      <button
-        @click="save"
-        class="w-full bg-red-800 text-white py-2 rounded font-bold hover:bg-red-900"
+  <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto">
+      <h1
+        class="text-2xl font-bold mb-6 text-red-900 border-l-4 border-red-800 pl-4"
       >
-        บันทึกการส่งไปประเมิน
-      </button>
+        มอบหมายการประเมิน
+      </h1>
+      <div
+        class="bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-red-800"
+      >
+        <h2 class="text-xl font-semibold mb-4 text-red-800">
+          ผู้รับการประเมิน
+        </h2>
+
+        <div class="space-y-3">
+            <div class="">
+            <div>
+              <select name="" id="" class="input-field" v-model="board">
+                <option v-for="u in user" :key="u.id" :value="u.id">
+                  {{ u.username }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <button
+            @click="usersign(board)"
+            class="w-full mt-4 bg-red-800 text-white font-bold py-2 rounded hover:bg-red-900 shadow-lg transition"
+          >
+            มอบหมายการประเมิน
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="grid grid-cols-2 gap-4">
+          <div v-for="g in users" :key="g.user_id" class="card-t-blue" @click="usersigndel(g.user_id)">
+            <div>
+              <label for="" class="label">{{ g.username }}</label>
+            </div>
+            <div>
+              <label for="" class="bg-gray-500 rounded-md text-white">ผู้รับการประเมิน</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div
+          v-for="(g, i) in group.value"
+          :key="g.group_id"
+          class="bg-white p-4 rounded-lg shadow border-l-4 border-red-800"
+        >
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-lg font-bold text-red-900">
+              กลุ่มที่ {{ i + 1 }}
+            </h3>
+            <button
+              @click="delgroup(g.group_id)"
+              class="text-gray-400 hover:text-red-600"
+            >
+              <span class="mdi mdi-close-circle text-xl"></span>
+            </button>
+          </div>
+          <div v-for="t in g.datas" :key="t.group_id">
+            <div class="grid grid-cols-2">
+              <div>
+                {{ t.username }}
+              </div>
+              <div>
+                {{ t.group_role }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { useService } from "../../../composables/services";
 
-// ข้อมูลจำลองแบบง่ายๆ
-const users = ref(["นายสมชาย ใจดี", "นางสาวสมหญิง มีสุข", "นายวิชาญ เรียนรู้"]);
-const groups = ref([
-  ["กรรมการ 1", "กรรมการ 2", "กรรมการ 3"],
-  ["กรรมการ A", "กรรมการ B"],
-]);
+const { usersign,usersigndel,usersignget,getalluser } = useService()
 
-const selectedUser = ref("");
-const selectedGroup = ref("");
+const users = ref({})
+const user = ref("")
+const board = ref("")
+const ball = ref([])
 
-const save = () => {
-  if (selectedUser.value && selectedGroup.value) {
-    alert(
-      `ส่งให้ กลุ่มที่ ${selectedGroup.value} ประเมินคุณ ${selectedUser.value} เรียบร้อย!`,
-    );
-    // ล้างค่า
-    selectedUser.value = "";
-    selectedGroup.value = "";
-  } else {
-    alert("กรุณาเลือกข้อมูลให้ครบถ้วน");
-  }
-};
+function test(){
+  console.log(group.value)
+}
+
+// const saveGroup = () => {
+//   const hasEmptyName = newMembers.value.some((m) => !m.name);
+//   if (hasEmptyName) return alert("กรุณากรอกชื่อเข้คระ");
+
+
+
+//   savedGroups.value.push([...newMembers.value]);
+
+
+//   newMembers.value = [{ name: "", role: "กรรมการ" }];
+// };
+
+// const map = (id,d) => {
+//   const mapdata = {}
+
+//   id.forEach(idg => {
+//     mapdata[idg.group_id] = {...idg,datas:[]}
+//   });
+//   d.forEach(da => {
+//     mapdata[da.group_id]?.datas.push({...da})
+//   });
+//   return Object.values(mapdata)
+// }
+
+
+const loaduser = async() => {
+  const u = await getalluser()
+  const au = await usersignget()
+  // group.value = map(g[0],g[1])
+  users.value = au
+  user.value = u
+}
+
+onMounted(() => {
+  loaduser()
+})
+
 </script>
 
 <style scoped>
-/* เขียนสไตล์ง่ายๆ */
+.mdi {
+  vertical-align: middle;
+}
 </style>

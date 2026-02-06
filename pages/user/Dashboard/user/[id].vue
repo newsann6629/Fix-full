@@ -6,7 +6,7 @@
                     ระบบประเมินบุคลากรออนไลน์
                 </div>
                 <div v-if="open" class="">
-                    <div class="">
+                    <div class="" v-if="form.length >= 1">
                         <div v-for="f,i in form" :key="f.indicator_id" class="card">
                             <div class="mb-3">
                                 <label for="" class="font-bold text-3xl"> {{ i + 1 }} . {{ f.indicator }}</label>
@@ -62,17 +62,22 @@
                             </div>
                             </div>
                         </div>
+                        <div class="mt-3">
+                            <input class="input-field" type="file" name="" id="" @change="onchange">
+                        </div>
+                        <div class="mt-3">
+                            <input class="input-field" type="text" name="" id="" v-model="comment" placeholder="comment">
+                        </div>
+                        <div class="mt-3 flex justify-center">
+                            <button type="submit" class="btn bg-blue-600 px-5" @click="sfb(payload,files,time.time_id,userid,comment)">
+                                บันทึก
+                            </button>
+                        </div>
                     </div>
-                    <div class="mt-3">
-                        <input class="input-field" type="file" name="" id="" @change="onchange">
-                    </div>
-                    <div class="mt-3">
-                        <input class="input-field" type="text" name="" id="" v-model="comment" placeholder="comment">
-                    </div>
-                    <div class="mt-3 flex justify-center">
-                        <button type="submit" class="btn bg-blue-600 px-5" @click="sfb(payload,files,time.time_id,userid,comment)">
-                            บันทึก
-                        </button>
+                    <div v-if="form.length == 0">
+                        <div class="border border-dashed p-6 rounded-md text-gray-500 text-center">
+                            <label for="">ทำแบบฟอร์มไปแล้ว</label>
+                        </div>
                     </div>
                 </div>
 
@@ -103,7 +108,7 @@ const payload = ref({})
 const userid = route.params.id
 
 const comment = ref("")
-const files = ref({})
+const files = ref("")
 const open = ref(false)
 const time = ref({})
 const form = ref([])

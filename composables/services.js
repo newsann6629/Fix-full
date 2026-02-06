@@ -25,6 +25,18 @@ export const useService = () =>{
 //     return Object.values(epMap)
 // }
 
+    const error = async(e) =>{
+        alert("Something Went Wrong")
+        console.log(e)
+    }
+    const success = async() =>{
+        alert("Success")
+    }
+    const success_reload = async() =>{
+        alert("Success")
+        window.location.reload()
+    }
+
     const login = async(u,p) =>{
         if(u == "" || p == ""){
             alert("กรุณากรอกชื่อหรือรหัสผ่าน")
@@ -338,7 +350,56 @@ export const useService = () =>{
         }
     }
 
+    const usersign = async(id) => {
+        UserStore.LoadUser()
+        try{
+            const res = await axios.post(`api/admin/usersign/${id}`,{
+                headers: {
+                    token: UserStore.token,
+                }
+            })
+            success_reload(res)
+        }catch(err){
+            error(err)
+        }
+    }
+
+    const usersignget = async() => {
+        UserStore.LoadUser()
+        try{
+            const res = await axios.get("api/admin/usersign",{
+                headers: {
+                    token: UserStore.token,
+                }
+            })
+            return res.data.data
+        }catch(err){
+            error(err)
+        }
+    }
+
+    const usersigndel = async(id) => {
+        UserStore.LoadUser()
+        const token = UserStore.token
+        try{
+            const res = await axios.delete(`api/admin/usersign/${id}`,{
+                data:{
+                    token: token
+                }
+            })
+            alert("ลบสำเร็จ")
+            console.log(res)
+            window.location.reload()
+        }catch(err){
+            alert("Something Went Wrong")
+            console.log(err)
+        }
+    }
+
     return {
+        usersigndel,
+        usersignget,
+        usersign,
         allb,
         delgroup,
         brole,

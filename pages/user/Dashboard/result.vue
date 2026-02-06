@@ -1,6 +1,6 @@
 <template>
-  <div class="p-6 bg-gray-100 w-full h-full flex justify-center">
-    <div class="max-w-6xl mx-auto bg-white shadow rounded-xl p-6">
+  <div class="p-6">
+    <div class="card-t-blue">
 
       <h1 class="text-2xl font-bold mb-6 text-center">
         ผลการประเมิน
@@ -11,58 +11,95 @@
           <tr>
             <th class="border px-4 py-2 text-left w-12">#</th>
             <th class="border px-4 py-2 text-left">ชื่อผู้เข้าประเมิน</th>
-            <th class="border px-4 py-2 text-left">ชื่อกรรมการผู้ประเมิน</th>
             <th class="border px-4 py-2 text-center">คะแนนตัวเอง</th>
-            <th class="border px-4 py-2 text-center">คะแนนจากกรรมการ</th>
-            <th class="border px-4 py-2 text-center">Comment จากกรรมการ</th>
+            <th class="border px-4 py-2 text-center">รอบการประเมิน</th>
           </tr>
         </thead>
 
         <tbody>
           <tr
-            v-for="(u, i) in user"
-            :key="i"
+            v-for="(u,i) in userscore"
+            :key="u.user_id"
             class="hover:bg-gray-50"
           >
             <td class="border px-4 py-2">
-              {{ i }}
+              {{ i + 1  }}
             </td>
 
             <td class="border px-4 py-2">
-              {{ u.user_username }}
-            </td>
-
-            <td class="border px-4 py-2">
-              {{ u.board_username ?? 'ยังไม่ระบุกรรมการ' }}
+              {{ u.username }}
             </td>
 
             <td class="border px-4 py-2 text-center">
               {{ u.selfsum ?? 'ยังไม่ประเมิน' }}
             </td>
 
-            <td class="border px-4 py-2 text-center">
-                <div v-if="!u.board_username">
-                  {{'ยังไม่ประเมิน' }}
-                </div>
-                <div v-if="u.board_username">
-                  {{ u.boardsum }}
-                </div>
+            <td class="border px-4 py-2">
+              รอบที่ {{ u.time_id}}
             </td>
 
-            <td class="border px-4 py-2 text-center">
-              {{ u.comment ?? 'ยังไม่ประเมิน' }}
-            </td>
           </tr>
 
-          <tr v-if="!user">
+          <tr v-if="!userscore">
             <td colspan="6" class="text-center py-6 text-gray-500">
               ไม่มีข้อมูลการประเมิน
             </td>
           </tr>
         </tbody>
       </table>
-
     </div>
+
+    <div class="card-t-blue mt-3">
+
+      <h1 class="text-2xl font-bold mb-6 text-center">
+        ผลการประเมินจากกรรมการ
+      </h1>
+
+      <table class="min-w-full border border-gray-300">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="border px-4 py-2 text-left w-12">#</th>
+            <th class="border px-4 py-2 text-left">ชื่อกรรมการผู้ประเมิน</th>
+            <th class="border px-4 py-2 text-center">สถานะของผู้ประเมิน</th>
+            <th class="border px-4 py-2 text-center">Comment จากกรรมการ</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            v-for="(b,i) in boardscore"
+            :key="b.board_id"
+            class="hover:bg-gray-50"
+          >
+            <td class="border px-4 py-2">
+              {{ i + 1 }}
+            </td>
+
+
+            <td class="border px-4 py-2">
+              {{ b.username ?? 'ยังไม่ระบุกรรมการ' }}
+            </td>
+
+            
+            <td class="border px-4 py-2">
+              asdfa
+            </td>
+
+
+            <td class="border px-4 py-2 text-center">
+              {{ b.comment_board ?? 'ยังไม่ประเมิน' }}
+            </td>
+          </tr>
+
+          <tr v-if="!userscore">
+            <td colspan="6" class="text-center py-6 text-gray-500">
+              ไม่มีข้อมูลการประเมิน
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </template>
 
@@ -71,12 +108,14 @@ import { Formservice } from '../../../composables/form';
 import { ref } from 'vue';
 const {userresult} = Formservice()
 
-const user = ref("")
+const userscore = ref("")
+const boardscore = ref("")
 
 const ld = async() => {
   try {
     const res = await userresult()
-    user.value = res
+    userscore.value = res[0]
+    boardscore.value = res[1]
     console.log(res)
   }catch(err){
     console.log(err)
