@@ -18,6 +18,12 @@
 .card-t-blue{
   @apply bg-white rounded-lg shadow-lg border-t-4 border-blue-400 p-6 hover:border-blue-600 transition-colors duration-200;
 }
+.card-t-red{
+  @apply bg-white rounded-lg shadow-lg border-t-4 border-red-400 p-6 hover:border-red-600 transition-colors duration-200;
+}
+.card-t-yellow{
+  @apply bg-white rounded-lg shadow-lg border-t-4 border-yellow-400 p-6 hover:border-yellow-600 transition-colors duration-200;
+}
 .model-overlay {
   @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
 }

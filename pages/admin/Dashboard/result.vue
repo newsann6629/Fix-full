@@ -1,59 +1,61 @@
 <template>
-  <div class="bg-gray-100 w-full h-full p-6 flex justify-center">
-    <div class="bg-white shadow p-6 rounded-xl">
-    <h1 class="font-bold text-center text-blue-800 mb-6 text-2xl">ผลการประเมิน</h1>
-    <table class="border border-gray-300">
-      <thead class="bg-blue-500 ">                                          
-        <tr class="text-white">
-          <th class="border px-4 py-2 text-center w-12">#</th>
-          <th class="border px-4 py-2 text-center">ชื่อผู้เข้าร่วมการประเมิน</th>
-          <th class="border px-4 py-2 text-center">ชื่อกรรมการผู้ประเมิน</th>
-          <th class="border px-4 py-2 text-center">คะแนนตัวเอง</th>
-          <th class="border px-4 py-2 text-center">คะแนนจากกรรมการ</th>
-          <th class="border px-4 py-2 text-center">Comment จากกรรมการ</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr 
-        v-for="(user,index) in data"
-        :key="index"
-        class="hover:bg-gray-50"
-        >
-          <td class="border px-4 py-2">
-            {{ index + 1 }}
-          </td>
-          <td class="border px-4 py-2">
-            {{ user.userName }}
-          </td>
-          <td class="border px-4 py-2">
-            {{ user.boardName ?? 'ยังไม่ระบุกรรมการ' }}
-          </td>
-          <td>
-            {{ user.selfscore ?? 'ยังไม่ประเมิน' }}
-          </td>
-          <td class="border px-4 py-2">
-            {{ user.judgeScore ?? 'ยังไม่ประเมิน' }}
-          </td>
-          <td class="border px-4 py-2">
-            {{ user.comment ?? 'ยังไม่ประเมิน' }}
-          </td>
-        </tr>
-        <tr>
-          <td colspan="6" class="text-center py-6 text-gray-500">
-            ไม่มีข้อมูลการประเมิน
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="p-6 bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto">
+      <h1
+        class="text-2xl font-bold mb-6 text-red-900 border-l-4 border-red-800 pl-4"
+      >
+        ดูผลสรุปคแนน
+      </h1>
+      <div class="card">
+        <div>
+          <select name="" id="" class="input-field">
+            <option value="" v-for="u in userscore" :key="u.user_id" @change="load">{{ u.username }}</option>
+          </select>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { Formservice } from "../../../composables/form";
+import { ref } from "vue";
+const { adminresult } = Formservice();
 
+const userscore = ref("");
+const boardscore = ref("");
+const nonscore = ref("");
+const cscore = ref({});
+
+const ld = async () => {
+  try {
+    const res = await adminresult();
+    userscore.value = res[0];
+    boardscore.value = res[1];
+    nonscore.value = res[3];
+    cscore.value = map(res[0], res[1]);
+    console.log(res);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const map = (uscore, bsocre) => {
+  const epMap = {};
+
+  uscore.forEach((us) => {
+    epMap[us.user_id] = { ...us, boardscores: [] };
+  });
+  bsocre.forEach((bs) => {
+    epMap[bs.user_id]?.boardscores.push({ ...bs });
+  });
+  console.log(epMap);
+  return Object.values(epMap);
+};
+
+onMounted(() => {
+  ld();
+});
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

@@ -25,8 +25,8 @@ export const Formservice = () => {
         fd.append("score",JSON.stringify(score))
 
         Object.entries(f).forEach(([section_id, file]) => {
-            fd.append("file_id",(section_id))
-            fd.append("file", file || [])
+            fd.append("file_id",section_id)
+            fd.append("file[]", file)
         })
 
         for (const [key, value] of fd.entries()) {
@@ -89,6 +89,22 @@ export const Formservice = () => {
         }
     }
 
+    const adminresult = async() => {
+        UserStore.LoadUser()
+        const token =UserStore.token
+        try{
+            const res = await axios.get(`api/admin/result`,{
+                headers: {
+                    token: token
+                }
+            })
+            return res.data.data
+        }catch(err){
+            alert("Something went wrong")
+            console.log(err)
+        }
+    }
+
     const boarddata = async() => {
         UserStore.LoadUser()
         const token = UserStore.token
@@ -126,6 +142,7 @@ export const Formservice = () => {
     }
 
     return {
+        adminresult,
         sfb,
         boardform,
         boarddata,
